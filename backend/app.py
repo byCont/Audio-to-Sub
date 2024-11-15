@@ -5,6 +5,7 @@ import whisper
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from datetime import timedelta
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -21,35 +22,20 @@ model = whisper.load_model("medium")  # Carga el modelo "medium" de Whisper
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def generate_srt(transcription):
+def generate_srt(segments):
     """
-    Convierte la transcripción en formato SRT.
+    Convierte los segmentos en formato SRT.
     """
     lines = []
-    for i, segment in enumerate(transcription["segments"]):
-        # Número de secuencia
+    for i, segment in enumerate(segments):
         lines.append(f"{i + 1}")
         
-        # Tiempo de inicio y fin en formato SRT (hh:mm:ss,mss)
-        start = timedelta(seconds=int(segment["start"]))
-        end = timedelta(seconds=int(segment["end"]))
-        start_str = str(start)
-        end_str = str(end)
+        start = timedelta(seconds=float(segment["start"]))
+        end = timedelta(seconds=float(segment["end"]))
+        start_str = str(start).replace(".", ",")[:12] if "." in str(start) else str(start) + ",000"
+        end_str = str(end).replace(".", ",")[:12] if "." in str(end) else str(end) + ",000"
         
-        # Ajuste de formato
-        if "." in start_str:
-            start_str = start_str.replace(".", ",")[:12]  # hh:mm:ss,mmm
-        else:
-            start_str += ",000"
-        if "." in end_str:
-            end_str = end_str.replace(".", ",")[:12]
-        else:
-            end_str += ",000"
-        
-        # Línea de tiempo
         lines.append(f"{start_str} --> {end_str}")
-        
-        # Texto del segmento
         lines.append(segment["text"].strip())
         lines.append("")  # Línea vacía para separar entradas
 
@@ -70,20 +56,35 @@ def generate_subtitles():
 
     # Genera los subtítulos
     result = model.transcribe(file_path)
-    os.remove(file_path)  # Limpia el archivo de audio subido
+    os.remove(file_path)
 
-    # Genera el archivo .srt
-    srt_content = generate_srt(result)
+    # Crea el archivo SRT
+    srt_content = generate_srt(result["segments"])
     srt_filename = f"{os.path.splitext(filename)[0]}.srt"
     srt_path = os.path.join(app.config["SRT_FOLDER"], srt_filename)
     with open(srt_path, "w", encoding="utf-8") as srt_file:
         srt_file.write(srt_content)
 
-    # Devuelve la transcripción y el enlace de descarga del archivo SRT
+    # Retorna los segmentos de subtítulos en lugar de texto completo
     return jsonify({
-        "subtitles": result["text"],
+        "segments": result["segments"],  # Lista de segmentos de subtítulos
         "srt_url": f"/download/{srt_filename}"
     })
+
+@app.route("/save-subtitles", methods=["POST"])
+def save_subtitles():
+    data = request.get_json()
+    segments = data.get("segments")
+    filename = data.get("filename", "edited_subtitles.srt")
+    
+    # Genera el archivo SRT con los datos editados
+    srt_content = generate_srt(segments)
+    srt_path = os.path.join(app.config["SRT_FOLDER"], filename)
+    with open(srt_path, "w", encoding="utf-8") as srt_file:
+        srt_file.write(srt_content)
+
+    # Devuelve el enlace de descarga del archivo SRT editado
+    return jsonify({"srt_url": f"/download/{filename}"})
 
 @app.route("/download/<filename>")
 def download_srt(filename):
