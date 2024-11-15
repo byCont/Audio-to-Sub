@@ -1,4 +1,6 @@
 // frontend/src/components/SubtitleEditor.jsx
+// Componente para editar subtítulos generados
+
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types

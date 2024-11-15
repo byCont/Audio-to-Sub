@@ -1,4 +1,6 @@
 // frontend/src/components/FileUploader.jsx
+// Componente para subir archivo de audio
+
 import { useState } from "react";
 import axios from "axios";
 import SubtitleEditor from "./SubtitleEditor";
