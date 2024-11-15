@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// frontend/src/components/SubtitleEditor.jsx
+>>>>>>> parent of 5e0956e (backend organization)
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types
