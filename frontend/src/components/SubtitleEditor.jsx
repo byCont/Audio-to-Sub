@@ -1,6 +1,3 @@
-// frontend/src/components/SubtitleEditor.jsx
-// Componente para editar subtítulos generados
-
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types
@@ -23,6 +20,21 @@ function SubtitleEditor({ segments, onSave }) {
         const updatedSegments = [...editedSegments];
         updatedSegments[index].end = newEndTime;
         setEditedSegments(updatedSegments);
+    };
+
+    const handleDeleteSegment = (index) => {
+        const updatedSegments = [...editedSegments];
+        updatedSegments.splice(index, 1); // Elimina el segmento en la posición index
+        setEditedSegments(updatedSegments);
+    };
+
+    const handleAddSegment = () => {
+        const newSegment = {
+            start: "00:00:00.000",
+            end: "00:00:01.000",
+            text: "New segment",
+        };
+        setEditedSegments([...editedSegments, newSegment]); // Añade un nuevo segmento al final
     };
 
     const handleSave = () => {
@@ -54,16 +66,10 @@ function SubtitleEditor({ segments, onSave }) {
                             </div>
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => handleTextChange(index, "")} // Vaciar el texto
+                                    onClick={() => handleDeleteSegment(index)} // Eliminar el segmento
                                     className="text-gray-400 hover:text-red-400"
                                 >
                                     🗑
-                                </button>
-                                <button
-                                    onClick={() => alert("Editando...")} // Placeholder para editar
-                                    className="text-gray-400 hover:text-blue-400"
-                                >
-                                    ✏️
                                 </button>
                             </div>
                         </div>
@@ -76,6 +82,12 @@ function SubtitleEditor({ segments, onSave }) {
                     </div>
                 ))}
             </div>
+            <button
+                onClick={handleAddSegment} // Agregar un nuevo segmento
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded w-full"
+            >
+                Add New Segment
+            </button>
             <button
                 onClick={handleSave}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 mt-6 rounded w-full"
