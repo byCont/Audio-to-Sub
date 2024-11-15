@@ -1,0 +1,10 @@
+# Node modules
+frontend/node_modules
+# Python environment
+backend/venv
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.srt
+uploads/
+subtitles/
