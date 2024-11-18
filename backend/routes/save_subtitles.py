@@ -1,3 +1,6 @@
+# backend/routes/save_subtitles.py
+# Ruta para guardar subtítulos editados
+
 import os
 from flask import request, jsonify
 from config import SRT_FOLDER

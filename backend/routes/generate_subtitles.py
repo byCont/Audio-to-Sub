@@ -1,3 +1,6 @@
+# backend/routes/generate_subtitles.py
+# Ruta para generar subtítulos
+
 import os
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
