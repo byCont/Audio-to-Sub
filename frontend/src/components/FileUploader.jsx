@@ -1,3 +1,6 @@
+// frontend/src/components/FileUploader.jsx
+// Componente para subir archivos (Audio y Subtitulos)
+
 import { useState } from "react";
 import axios from "axios";
 import SubtitleEditor from "./SubtitleEditor";
@@ -9,11 +12,13 @@ function FileUploader() {
     const [filename, setFilename] = useState("edited_subtitles.srt");
     const [srtUrl, setSrtUrl] = useState(null);
     const [error, setError] = useState("");
+    const [selectedFileName, setSelectedFileName] = useState("");
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
             const fileType = selectedFile.name.split(".").pop();
+            setSelectedFileName(selectedFile.name); // Actualizar el nombre del archivo seleccionado
             if (fileType === "srt") {
                 setSrtFile(selectedFile);
                 setFile(null); // Reset audio file selection
@@ -24,6 +29,7 @@ function FileUploader() {
                 setError("");
             } else {
                 setError("Formato no compatible. Solo se aceptan archivos de audio (.mp3, .wav, .mp4, .m4a) y subtítulos (.srt).");
+                setSelectedFileName(""); // Limpiar el nombre si hay error
             }
         }
     };
@@ -104,6 +110,11 @@ function FileUploader() {
                     className="hidden"
                     aria-describedby="fileHelp"
                 />
+                {selectedFileName && (
+                    <p className="text-center text-green-400">
+                        Archivo seleccionado: <span className="font-medium">{selectedFileName}</span>
+                    </p>
+                )}
                 <p id="fileHelp" className="text-sm text-gray-400 text-center">
                     Archivos soportados: <code>.mp3, .wav, .mp4, .m4a</code> para audio y <code>.srt</code> para subtítulos.
                 </p>

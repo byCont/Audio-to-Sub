@@ -1,9 +1,10 @@
 // frontend/src/components/SubtitleEditor.jsx
 // Componente para editar subtítulos generados
 
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 
-// Utility functions for time formatting
+// Utility functions remain the same...
 const formatTimeToDisplay = (timeInSeconds) => {
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
@@ -28,9 +29,7 @@ const validateTimeFormat = (timeString) => {
     return /^\d{2}:\d{2}:\d{2},\d{3}$/.test(timeString);
 };
 
-// eslint-disable-next-line react/prop-types
 function SubtitleEditor({ segments, onSave }) {
-    // eslint-disable-next-line react/prop-types
     const [editedSegments, setEditedSegments] = useState(segments.map(segment => ({
         ...segment,
         start: formatTimeToDisplay(Number(segment.start)),
@@ -44,34 +43,48 @@ function SubtitleEditor({ segments, onSave }) {
         setEditedSegments(updatedSegments);
     };
 
+    /// Merge with handleTimeChange
     const handleTimeChange = (index, type, newValue) => {
-        // Permite la edición mientras el usuario escribe
-        const updatedSegments = [...editedSegments];
-        updatedSegments[index][type] = newValue;
-        setEditedSegments(updatedSegments);
+      const updatedSegments = [...editedSegments];
+      updatedSegments[index][type] = newValue;
+      setEditedSegments(updatedSegments);
 
-        // Valida el formato cuando el campo pierde el foco
-        if (!validateTimeFormat(newValue)) {
-            setTimeError(`Invalid time format for segment ${index + 1}. Use HH:MM:SS,mmm`);
-            return;
-        }
+      if (!validateTimeFormat(newValue)) {
+          setTimeError(`Invalid time format for segment ${index + 1}. Use HH:MM:SS,mmm`);
+          return;
+      }
 
-        // Valida que el tiempo de inicio sea menor que el tiempo final
-        if (type === 'start' && parseTimeToSeconds(newValue) >= parseTimeToSeconds(updatedSegments[index].end)) {
-            setTimeError(`Start time must be less than end time in segment ${index + 1}`);
-            return;
-        }
-        if (type === 'end' && parseTimeToSeconds(newValue) <= parseTimeToSeconds(updatedSegments[index].start)) {
-            setTimeError(`End time must be greater than start time in segment ${index + 1}`);
-            return;
-        }
+      if (type === 'start' && parseTimeToSeconds(newValue) >= parseTimeToSeconds(updatedSegments[index].end)) {
+          setTimeError(`Start time must be less than end time in segment ${index + 1}`);
+          return;
+      }
+      if (type === 'end' && parseTimeToSeconds(newValue) <= parseTimeToSeconds(updatedSegments[index].start)) {
+          setTimeError(`End time must be greater than start time in segment ${index + 1}`);
+          return;
+      }
 
-        // Si todo está bien, limpia el error
-        setTimeError("");
-    };
+      setTimeError("");
+  };
 
+  const handleMergeSegments = (index) => {
+      const updatedSegments = [...editedSegments];
+      if (index < updatedSegments.length - 1) {
+          // Combine the text of the current and next segment
+          updatedSegments[index].text += " " + updatedSegments[index + 1].text;
+
+          // Adjust the end time of the merged segment
+          updatedSegments[index].end = updatedSegments[index + 1].end;
+
+          // Remove the next segment
+          updatedSegments.splice(index + 1, 1);
+
+          setEditedSegments(updatedSegments);
+      } else {
+          setTimeError("No segment to merge with.");
+      }
+  };
+    /// Ednd handleTimeChange
     const handleTimeBlur = (index, type, value) => {
-        // Si el formato no es válido, restaura el valor anterior
         if (!validateTimeFormat(value)) {
             const updatedSegments = [...editedSegments];
             updatedSegments[index][type] = formatTimeToDisplay(parseTimeToSeconds(segments[index][type]));
@@ -80,7 +93,6 @@ function SubtitleEditor({ segments, onSave }) {
             return;
         }
 
-        // Valida y actualiza los tiempos
         const currentTime = parseTimeToSeconds(value);
         const updatedSegments = [...editedSegments];
         
@@ -106,20 +118,35 @@ function SubtitleEditor({ segments, onSave }) {
         setEditedSegments(updatedSegments);
     };
 
-    const handleAddSegment = () => {
-        const lastSegment = editedSegments[editedSegments.length - 1];
-        const newStart = lastSegment ? lastSegment.end : "00:00:00,000";
-        const newEndTime = parseTimeToSeconds(newStart) + 1;
+    const handleInsertSegment = (index) => {
+        const currentSegment = editedSegments[index];
+        const nextSegment = editedSegments[index + 1];
+        
+        let newStart, newEnd;
+        
+        if (nextSegment) {
+            const currentEndTime = parseTimeToSeconds(currentSegment.end);
+            const nextStartTime = parseTimeToSeconds(nextSegment.start);
+            newStart = formatTimeToDisplay(currentEndTime);
+            newEnd = formatTimeToDisplay((currentEndTime + nextStartTime) / 2);
+        } else {
+            const currentEndTime = parseTimeToSeconds(currentSegment.end);
+            newStart = formatTimeToDisplay(currentEndTime);
+            newEnd = formatTimeToDisplay(currentEndTime + 1);
+        }
+
         const newSegment = {
             start: newStart,
-            end: formatTimeToDisplay(newEndTime),
+            end: newEnd,
             text: "New segment"
         };
-        setEditedSegments([...editedSegments, newSegment]);
+
+        const updatedSegments = [...editedSegments];
+        updatedSegments.splice(index + 1, 0, newSegment);
+        setEditedSegments(updatedSegments);
     };
 
     const handleSave = () => {
-        // Verifica que todos los segmentos tengan formato válido
         const hasInvalidSegments = editedSegments.some(segment => 
             !validateTimeFormat(segment.start) || !validateTimeFormat(segment.end)
         );
@@ -129,7 +156,6 @@ function SubtitleEditor({ segments, onSave }) {
             return;
         }
 
-        // Convert time format back to seconds before saving
         const segmentsInSeconds = editedSegments.map(segment => ({
             ...segment,
             start: parseTimeToSeconds(segment.start).toString(),
@@ -139,65 +165,78 @@ function SubtitleEditor({ segments, onSave }) {
     };
 
     return (
-        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8">
-            <h2 className="text-xl font-bold mb-4 text-center">SRT Reader & Editor</h2>
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col">
+            <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
             {timeError && (
                 <div className="bg-red-500 text-white p-2 rounded mb-4 text-sm">
                     {timeError}
                 </div>
             )}
-            <div className="space-y-4">
+            <div className="overflow-y-auto flex-1 pr-2">
                 {editedSegments.map((segment, index) => (
-                    <div key={index} className="bg-gray-800 rounded-lg p-3 flex flex-col gap-2 shadow-sm">
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium">#{index + 1}</span>
-                            <div className="flex gap-2 text-sm">
-                                <input
-                                    type="text"
-                                    value={segment.start}
-                                    onChange={(e) => handleTimeChange(index, 'start', e.target.value)}
-                                    onBlur={(e) => handleTimeBlur(index, 'start', e.target.value)}
-                                    placeholder="HH:MM:SS,mmm"
-                                    className="bg-gray-700 text-white rounded px-2 py-1 w-32 text-center font-mono"
-                                />
-                                <span>→</span>
-                                <input
-                                    type="text"
-                                    value={segment.end}
-                                    onChange={(e) => handleTimeChange(index, 'end', e.target.value)}
-                                    onBlur={(e) => handleTimeBlur(index, 'end', e.target.value)}
-                                    placeholder="HH:MM:SS,mmm"
-                                    className="bg-gray-700 text-white rounded px-2 py-1 w-32 text-center font-mono"
-                                />
+                    <div key={index} className="relative">
+                        <div className="bg-gray-800 rounded-lg p-3 flex flex-col gap-2 shadow-sm border border-gray-500/25">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium">#{index + 1}</span>
+                                <div className="flex gap-2 text-sm">
+                                    <input
+                                        type="text"
+                                        value={segment.start}
+                                        onChange={(e) => handleTimeChange(index, 'start', e.target.value)}
+                                        onBlur={(e) => handleTimeBlur(index, 'start', e.target.value)}
+                                        placeholder="HH:MM:SS,mmm"
+                                        className="bg-gray-700 text-white rounded px-2 py-1 w-32 text-center font-mono"
+                                    />
+                                    <span>→</span>
+                                    <input
+                                        type="text"
+                                        value={segment.end}
+                                        onChange={(e) => handleTimeChange(index, 'end', e.target.value)}
+                                        onBlur={(e) => handleTimeBlur(index, 'end', e.target.value)}
+                                        placeholder="HH:MM:SS,mmm"
+                                        className="bg-gray-700 text-white rounded px-2 py-1 w-32 text-center font-mono"
+                                    />
+                                </div>
                             </div>
-                            <button
-                                onClick={() => handleDeleteSegment(index)}
-                                className="text-gray-400 hover:text-red-400"
-                            >
-                                🗑
-                            </button>
+                            <textarea
+                                value={segment.text}
+                                onChange={(e) => handleTextChange(index, e.target.value)}
+                                className="bg-gray-700 text-white rounded px-2 py-1 w-full mt-1"
+                                rows={2}
+                            />
                         </div>
-                        <textarea
-                            value={segment.text}
-                            onChange={(e) => handleTextChange(index, e.target.value)}
-                            className="bg-gray-700 text-white rounded px-2 py-1 w-full mt-1"
-                            rows={2}
-                        />
+                        <button
+                            onClick={() => handleInsertSegment(index)}
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-green-400 py-1 px-2.5  rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            title="Add line"
+                        >
+                            +
+                        </button>
+                        <button
+                            onClick={() => handleMergeSegments(index)}
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-cyan-400 py-1 px-3 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            title="Merge lines"
+                        >
+                            ↨
+                        </button>
+                        <button
+                            onClick={() => handleDeleteSegment(index)}
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-red-400 py-1 px-3 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            title="Delete line"
+                        >
+                            🗑
+                        </button>
                     </div>
                 ))}
             </div>
-            <button
-                onClick={handleAddSegment}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded w-full"
-            >
-                Add New Segment
-            </button>
-            <button
-                onClick={handleSave}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 mt-6 rounded w-full"
-            >
-                Save Changes
-            </button>
+            <div className="mt-4">
+                <button
+                    onClick={handleSave}
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full"
+                >
+                    Save Changes
+                </button>
+            </div>
         </div>
     );
 }
