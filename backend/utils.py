@@ -39,10 +39,11 @@ def generate_srt(segments):
     
     for i, segment in enumerate(segments, start=1):
         # Obtener y limpiar el texto
-        text = segment["text"].replace('\n', ' ').strip()
+        text_lines = segment["text"].splitlines()  # Divide el texto en líneas
+        cleaned_text = "\n".join(line.strip() for line in text_lines)  # Limpia cada línea y las une
         
         # Si no hay texto significativo después de la limpieza, continuar con el siguiente segmento
-        if not text or text.isspace():
+        if not cleaned_text or cleaned_text.isspace():
             continue
             
         # Convertir tiempos a formato SRT
@@ -60,7 +61,7 @@ def generate_srt(segments):
             
             srt_content.append(f"{i}")
             srt_content.append(f"{start_str} --> {end_str}")
-            srt_content.append(text)
+            srt_content.append(cleaned_text)
             srt_content.append("")  # Línea vacía para separar entradas
             
             previous_end = end_time

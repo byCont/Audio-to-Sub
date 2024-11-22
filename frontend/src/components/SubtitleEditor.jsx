@@ -165,7 +165,7 @@ function SubtitleEditor({ segments, onSave }) {
     };
 
     return (
-        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col">
+        <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col">
             <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
             {timeError && (
                 <div className="bg-red-500 text-white p-2 rounded mb-4 text-sm">
@@ -175,8 +175,8 @@ function SubtitleEditor({ segments, onSave }) {
             <div className="overflow-y-auto flex-1 pr-2">
                 {editedSegments.map((segment, index) => (
                     <div key={index} className="relative">
-                        <div className="bg-gray-800 rounded-lg p-3 flex flex-col gap-2 shadow-sm border border-gray-500/25">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-gray-800 rounded-lg p-1 flex flex-col shadow-sm border border-gray-500/50">
+                            <div className="flex justify-between gap-2">
                                 <span className="text-sm font-medium">#{index + 1}</span>
                                 <div className="flex gap-2 text-sm">
                                     <input
@@ -201,38 +201,40 @@ function SubtitleEditor({ segments, onSave }) {
                             <textarea
                                 value={segment.text}
                                 onChange={(e) => handleTextChange(index, e.target.value)}
-                                className="bg-gray-700 text-white rounded px-2 py-1 w-full mt-1"
+                                className="bg-gray-700 text-white rounded px-2 py-1 w-5/6 mt-1"
                                 rows={2}
                             />
                         </div>
+                        <div className="flex justify-end">
                         <button
                             onClick={() => handleInsertSegment(index)}
-                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-green-400 py-1 px-2.5  rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-green-400 py-1 px-2.5  rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/50"
                             title="Add line"
                         >
                             +
                         </button>
                         <button
                             onClick={() => handleMergeSegments(index)}
-                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-cyan-400 py-1 px-3 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-cyan-400 py-1 px-3 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/50"
                             title="Merge lines"
                         >
                             ↨
                         </button>
                         <button
                             onClick={() => handleDeleteSegment(index)}
-                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-red-400 py-1 px-3 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/25"
+                            className="bg-gray-800 hover:bg-gray-600 text-gray-400 hover:text-red-400 py-1 px-2.5 rounded-full transition-colors duration-200 top-1/2 right-2 transform -translate-y-1/2 -translate-x border-gray-500/50"
                             title="Delete line"
                         >
                             🗑
                         </button>
+                      </div>
                     </div>
                 ))}
             </div>
-            <div className="mt-4">
+            <div className="flex justify-center mt-4">
                 <button
                     onClick={handleSave}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
                 >
                     Save Changes
                 </button>
