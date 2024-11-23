@@ -4,6 +4,9 @@
 import { useState } from "react";
 import axios from "axios";
 import SubtitleEditor from "./SubtitleEditor";
+import FileInput from "./FileInput";
+import ErrorMessage from "./ErrorMessage";
+import UploadButton from "./UploadButton";
 
 function FileUploader() {
     const [file, setFile] = useState(null);
@@ -91,43 +94,14 @@ function FileUploader() {
             <p className="text-center text-gray-400">
                 Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar un archivo <code>.srt</code> para editarlo.
             </p>
-            {error && (
-                <div className="bg-red-600 text-white p-3 rounded-md">
-                    {error}
-                </div>
-            )}
-            <div className="space-y-4">
-                <label
-                    htmlFor="fileInput"
-                    className="block text-center bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-lg cursor-pointer"
-                >
-                    Seleccionar archivo
-                </label>
-                <input
-                    id="fileInput"
-                    type="file"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    aria-describedby="fileHelp"
-                />
-                {selectedFileName && (
-                    <p className="text-center text-green-400">
-                        Archivo seleccionado: <span className="font-medium">{selectedFileName}</span>
-                    </p>
-                )}
-                <p id="fileHelp" className="text-sm text-gray-400 text-center">
-                    Archivos soportados: <code>.mp3, .wav, .mp4, .m4a</code> para audio y <code>.srt</code> para subtítulos.
-                </p>
-            </div>
-            <button
-                onClick={handleUpload}
-                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold"
-            >
-                Subir archivo
-            </button>
-            {segments.length > 0 && (
-                <SubtitleEditor segments={segments} onSave={handleSave} />
-            )}
+            <ErrorMessage error={error} />
+            <FileInput
+                onFileChange={handleFileChange}
+                selectedFileName={selectedFileName}
+                fileHelpText="Archivos soportados: .mp3, .wav, .mp4, .m4a para audio y .srt para subtítulos."
+            />
+            <UploadButton onUpload={handleUpload} />
+            {segments.length > 0 && <SubtitleEditor segments={segments} onSave={handleSave} />}
             {srtUrl && (
                 <div className="text-center mt-4">
                     <a
@@ -144,3 +118,4 @@ function FileUploader() {
 }
 
 export default FileUploader;
+
