@@ -1,4 +1,4 @@
-// frontend/src/components/timeUtils.js
+// frontend/src/utils/timeUtils.js
 // Funciones para formatear y parsear tiempos
 
 export const formatTimeToDisplay = (timeInSeconds) => {

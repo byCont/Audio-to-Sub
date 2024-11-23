@@ -9,7 +9,7 @@ import {
     formatTimeToDisplay,
     parseTimeToSeconds,
     validateTimeFormat,
-} from "./timeUtils";
+} from "../../utils/timeUtils";
 
 const SubtitleEditor = ({ segments, onSave }) => {
     const [editedSegments, setEditedSegments] = useState(
@@ -120,7 +120,7 @@ const SubtitleEditor = ({ segments, onSave }) => {
     };
 
     return (
-        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col border border-gray-500/50">
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-md mx-auto mt-8 h-[600px] flex flex-col border border-gray-500/50">
             <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
             <ErrorAlert message={timeError} />
             <div className="overflow-y-auto flex-1 pr-2">

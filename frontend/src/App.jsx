@@ -1,4 +1,4 @@
-import FileUploader from "./components/FileUploader";
+import FileUploader from "./components/FileUploader/FileUploader";
 
 function App() {
   return (
@@ -8,8 +8,8 @@ function App() {
         Generador editor y de subtítulos
         </h1>
       </header>
-      <main className="p-6">
-        <FileUploader />
+      <main className="p-6 gap-2">
+        <FileUploader />   
       </main>
     </div>
   );

@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import axios from "axios";
-import SubtitleEditor from "./SubtitleEditor";
+import SubtitleEditor from "../SubtitleEditor/SubtitleEditor";
 import FileInput from "./FileInput";
 import ErrorMessage from "./ErrorMessage";
 import UploadButton from "./UploadButton";
@@ -89,7 +89,7 @@ function FileUploader() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
+        <div className="max-w-lg mx-auto p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
             <h1 className="text-2xl font-bold text-center">Sube un archivo</h1>
             <p className="text-center text-gray-400">
                 Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar un archivo <code>.srt</code> para editarlo.
