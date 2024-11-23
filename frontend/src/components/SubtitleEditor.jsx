@@ -33,13 +33,14 @@ function SubtitleEditor({ segments, onSave }) {
     const [editedSegments, setEditedSegments] = useState(segments.map(segment => ({
         ...segment,
         start: formatTimeToDisplay(Number(segment.start)),
-        end: formatTimeToDisplay(Number(segment.end))
+        end: formatTimeToDisplay(Number(segment.end)),
+        text: segment.text.trim(), // Eliminar espacios al inicio y final
     })));
     const [timeError, setTimeError] = useState("");
 
     const handleTextChange = (index, newText) => {
         const updatedSegments = [...editedSegments];
-        updatedSegments[index].text = newText;
+        updatedSegments[index].text = newText.trimStart(); // Eliminar espacios iniciales al editar
         setEditedSegments(updatedSegments);
     };
 
@@ -165,7 +166,7 @@ function SubtitleEditor({ segments, onSave }) {
     };
 
     return (
-        <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col">
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto mt-8 h-[600px] flex flex-col border border-gray-500/50">
             <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
             {timeError && (
                 <div className="bg-red-500 text-white p-2 rounded mb-4 text-sm">
@@ -234,7 +235,7 @@ function SubtitleEditor({ segments, onSave }) {
             <div className="flex justify-center mt-4">
                 <button
                     onClick={handleSave}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg"
                 >
                     Save Changes
                 </button>
