@@ -1,4 +1,4 @@
-// frontend/src/components/SubtitleEditor.jsx
+// frontend/src/components/SubtitleEditor/SubtitleEditor.jsx
 // Componente para editar subtítulos generados
 
 /* eslint-disable react/prop-types */

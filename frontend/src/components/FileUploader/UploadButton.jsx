@@ -1,4 +1,4 @@
-// frontend/src/components/UploadButton.jsx
+// frontend/src/components/FileUploader/UploadButton.jsx
 // Componente para manejar la carga de archivos
 
 /* eslint-disable react/prop-types */

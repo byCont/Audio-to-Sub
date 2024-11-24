@@ -1,4 +1,4 @@
-// frontend/src/components/ErrorAlert.jsx
+// frontend/src/components/SubtitleEditor/ErrorAlert.jsx
 // Componente para mostrar mensajes de error
 
 /* eslint-disable react/prop-types */

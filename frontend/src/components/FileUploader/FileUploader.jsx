@@ -1,4 +1,4 @@
-// frontend/src/components/FileUploader.jsx
+// frontend/src/components/FileUploader/FileUploader.jsx
 // Componente para subir archivos (Audio y Subtitulos)
 
 import { useState } from "react";

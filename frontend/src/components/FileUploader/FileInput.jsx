@@ -1,4 +1,4 @@
-// frontend/src/components/FileInput.jsx
+// frontend/src/components/FileUploader/FileInput.jsx
 // Componente para manejar la selección de archivos
 
 /* eslint-disable react/prop-types */

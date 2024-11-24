@@ -1,4 +1,4 @@
-// frontend/src/components/SubtitleSegment.jsx
+// frontend/src/components/SubtitleEditor/SubtitleSegment.jsx
 // Componente para mostrar y editar un segmento de subtítulos
 
 /* eslint-disable react/prop-types */

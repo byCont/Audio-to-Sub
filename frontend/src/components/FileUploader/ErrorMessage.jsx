@@ -1,4 +1,4 @@
-// frontend/src/components/ErrorMessage.jsx
+// frontend/src/components/FileUploader/ErrorMessage.jsx
 // Componente para mostrar mensajes de error
 
 /* eslint-disable react/prop-types */
