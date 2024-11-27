@@ -2,7 +2,10 @@
 // Componente para editar subtítulos generados
 
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { useWavesurfer } from '@wavesurfer/react';
+import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
+
 import SubtitleSegment from "./SubtitleSegment";
 import ErrorAlert from "./ErrorAlert";
 import {
@@ -11,7 +14,15 @@ import {
     validateTimeFormat,
 } from "../../utils/timeUtils";
 
-const SubtitleEditor = ({ segments, onSave }) => {
+// Utility function to format time
+const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
+const SubtitleEditor = ({ segments, onSave, audioFileUrl }) => {
+    // Prepare initial segments
     const [editedSegments, setEditedSegments] = useState(
         segments.map((segment) => ({
             ...segment,
@@ -21,14 +32,29 @@ const SubtitleEditor = ({ segments, onSave }) => {
         }))
     );
     const [timeError, setTimeError] = useState("");
+    const [currentSubtitleIndex, setCurrentSubtitleIndex] = useState(0);
 
-    // Handlers
+    // Ref for wavesurfer container
+    const containerRef = useRef(null);
+
+    // WaveSurfer hook
+    const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
+        container: containerRef,
+        height: 100,
+        waveColor: 'rgb(200, 0, 200)',
+        progressColor: 'rgb(100, 0, 100)',
+        url: audioFileUrl,
+        plugins: useMemo(() => [Timeline.create()], []),
+    });
+
+    // Text change handler
     const handleTextChange = (index, newText) => {
         const updatedSegments = [...editedSegments];
         updatedSegments[index].text = newText.trimStart();
         setEditedSegments(updatedSegments);
     };
 
+    // Time change handler
     const handleTimeChange = (index, type, newValue) => {
         const updatedSegments = [...editedSegments];
         updatedSegments[index][type] = newValue;
@@ -99,6 +125,12 @@ const SubtitleEditor = ({ segments, onSave }) => {
         setEditedSegments(updatedSegments);
     };
 
+    // Play/Pause handler
+    const onPlayPause = useCallback(() => {
+        wavesurfer && wavesurfer.playPause();
+    }, [wavesurfer]);
+
+    // Save handler
     const handleSave = () => {
         const hasInvalidSegments = editedSegments.some(
             (segment) =>
@@ -119,10 +151,63 @@ const SubtitleEditor = ({ segments, onSave }) => {
         onSave(segmentsInSeconds);
     };
 
+    // Sync subtitles with audio playback
+    useEffect(() => {
+        if (!wavesurfer) return;
+
+        const handleTimeUpdate = () => {
+            const currentTime = wavesurfer.getCurrentTime();
+
+            const index = editedSegments.findIndex(
+                (segment) =>
+                    currentTime >= parseTimeToSeconds(segment.start) &&
+                    currentTime < parseTimeToSeconds(segment.end)
+            );
+
+            if (index !== currentSubtitleIndex) {
+                setCurrentSubtitleIndex(index);
+            }
+        };
+
+        wavesurfer.on('audioprocess', handleTimeUpdate);
+
+        return () => {
+            wavesurfer.un('audioprocess', handleTimeUpdate);
+        };
+    }, [editedSegments, currentSubtitleIndex, wavesurfer]);
+
     return (
         <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-md mx-auto mt-8 h-[600px] flex flex-col border border-gray-500/50">
             <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
+            
             <ErrorAlert message={timeError} />
+            
+            {/* Wavesurfer Container */}
+            <div className="mb-4">
+                <div ref={containerRef} />
+            </div>
+
+            {/* Audio Playback Info */}
+            <div className="mb-4 flex justify-between items-center">
+                <p>Current Time: {formatTime(currentTime)}</p>
+                <button 
+                    onClick={onPlayPause} 
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                >
+                    {isPlaying ? 'Pause' : 'Play'}
+                </button>
+            </div>
+
+            {/* Real-time Subtitle Display */}
+            <div className="mb-4 bg-gray-800 p-2 rounded shadow">
+                <p className="text-center text-lg font-bold">
+                    {currentSubtitleIndex >= 0 && currentSubtitleIndex < editedSegments.length
+                        ? editedSegments[currentSubtitleIndex].text
+                        : "No subtitles available at this moment."}
+                </p>
+            </div>
+
+            {/* Subtitle Editor */}
             <div className="overflow-y-auto flex-1 pr-2">
                 {editedSegments.map((segment, index) => (
                     <SubtitleSegment
@@ -138,6 +223,7 @@ const SubtitleEditor = ({ segments, onSave }) => {
                     />
                 ))}
             </div>
+            
             <button
                 onClick={handleSave}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-4"

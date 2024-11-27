@@ -13,6 +13,7 @@ function FileUploader() {
     const [segments, setSegments] = useState([]);
     const [srtFile, setSrtFile] = useState(null);
     const [filename, setFilename] = useState("edited_subtitles.srt");
+    const [audioFileUrl, setAudioFileUrl] = useState(null); // NEW
     const [srtUrl, setSrtUrl] = useState(null);
     const [error, setError] = useState("");
     const [selectedFileName, setSelectedFileName] = useState("");
@@ -53,6 +54,7 @@ function FileUploader() {
                 });
 
                 setSegments(response.data.segments);
+                setAudioFileUrl(URL.createObjectURL(file)); // NEW
                 setSrtUrl(`http://127.0.0.1:5000${response.data.srt_url}`);
                 setFilename(`${file.name.split(".")[0]}_edited.srt`);
                 setError("");
@@ -101,7 +103,7 @@ function FileUploader() {
                 fileHelpText="Archivos soportados: .mp3, .wav, .mp4, .m4a para audio y .srt para subtítulos."
             />
             <UploadButton onUpload={handleUpload} />
-            {segments.length > 0 && <SubtitleEditor segments={segments} onSave={handleSave} />}
+            {segments.length > 0 && <SubtitleEditor segments={segments} audioFileUrl={audioFileUrl} onSave={handleSave} />}
             {srtUrl && (
                 <div className="text-center mt-4">
                     <a
