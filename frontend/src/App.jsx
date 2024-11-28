@@ -1,3 +1,6 @@
+// frontend/src/App.jsx
+// Archivo principal de la aplicación
+
 import FileUploader from "./components/FileUploader/FileUploader";
 
 function App() {

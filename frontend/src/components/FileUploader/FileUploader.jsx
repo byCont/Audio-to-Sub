@@ -91,7 +91,8 @@ function FileUploader() {
     };
 
     return (
-        <div className="max-w-lg mx-auto p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
+        <div className="max-w-full p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
+          <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mt-8 h-[250px] w-[450px] flex flex-col border border-gray-500/50 justify-content-start">
             <h1 className="text-2xl font-bold text-center">Sube un archivo</h1>
             <p className="text-center text-gray-400">
                 Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar un archivo <code>.srt</code> para editarlo.
@@ -102,6 +103,7 @@ function FileUploader() {
                 selectedFileName={selectedFileName}
                 fileHelpText="Archivos soportados: .mp3, .wav, .mp4, .m4a para audio y .srt para subtítulos."
             />
+          </div>
             <UploadButton onUpload={handleUpload} />
             {segments.length > 0 && <SubtitleEditor segments={segments} audioFileUrl={audioFileUrl} onSave={handleSave} />}
             {srtUrl && (
@@ -109,12 +111,14 @@ function FileUploader() {
                     <a
                         href={srtUrl}
                         download={filename}
-                        className="inline-block py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                        className="inline-block py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-full"
                     >
                         Descargar archivo .srt
                     </a>
                 </div>
             )}
+
+          
         </div>
     );
 }

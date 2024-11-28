@@ -23,3 +23,10 @@ export const parseTimeToSeconds = (timeString) => {
 };
 
 export const validateTimeFormat = (timeString) => /^\d{2}:\d{2}:\d{2},\d{3}$/.test(timeString);
+
+// Additional utility function for formatting time display
+export const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+};

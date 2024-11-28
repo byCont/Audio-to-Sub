@@ -6,7 +6,7 @@ const UploadButton = ({ onUpload }) => {
   return (
       <button
           onClick={onUpload}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold"
+          className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
       >
           Subir archivo
       </button>

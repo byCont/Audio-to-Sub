@@ -7,7 +7,7 @@ const FileInput = ({ onFileChange, selectedFileName, fileHelpText }) => {
       <div className="space-y-4">
           <label
               htmlFor="fileInput"
-              className="block text-center bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-lg cursor-pointer"
+              className="block text-center bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-full cursor-pointer"
           >
               Seleccionar archivo
           </label>
