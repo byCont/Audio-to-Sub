@@ -9,69 +9,65 @@ import ErrorMessage from "./ErrorMessage";
 import UploadButton from "./UploadButton";
 
 function FileUploader() {
-    const [file, setFile] = useState(null);
-    const [segments, setSegments] = useState([]);
+    const [audioFile, setAudioFile] = useState(null);
     const [srtFile, setSrtFile] = useState(null);
+    const [segments, setSegments] = useState([]);
     const [filename, setFilename] = useState("edited_subtitles.srt");
-    const [audioFileUrl, setAudioFileUrl] = useState(null); // NEW
+    const [audioFileUrl, setAudioFileUrl] = useState(null);
     const [srtUrl, setSrtUrl] = useState(null);
     const [error, setError] = useState("");
-    const [selectedFileName, setSelectedFileName] = useState("");
+    const [selectedAudioFileName, setSelectedAudioFileName] = useState("");
+    const [selectedSrtFileName, setSelectedSrtFileName] = useState("");
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
-            const fileType = selectedFile.name.split(".").pop();
-            setSelectedFileName(selectedFile.name); // Actualizar el nombre del archivo seleccionado
+            const fileType = selectedFile.name.split(".").pop().toLowerCase();
+            
             if (fileType === "srt") {
                 setSrtFile(selectedFile);
-                setFile(null); // Reset audio file selection
+                setSelectedSrtFileName(selectedFile.name);
+                setSelectedAudioFileName("");  // Reset audio file
                 setError("");
             } else if (["mp3", "wav", "mp4", "m4a"].includes(fileType)) {
-                setFile(selectedFile);
-                setSrtFile(null); // Reset .srt file selection
+                setAudioFile(selectedFile);
+                setSelectedAudioFileName(selectedFile.name);
+                setSelectedSrtFileName("");  // Reset SRT file
                 setError("");
             } else {
                 setError("Formato no compatible. Solo se aceptan archivos de audio (.mp3, .wav, .mp4, .m4a) y subtítulos (.srt).");
-                setSelectedFileName(""); // Limpiar el nombre si hay error
             }
         }
     };
 
     const handleUpload = async () => {
-        if (!file && !srtFile) {
+        if (!audioFile && !srtFile) {
             setError("Por favor, selecciona un archivo de audio o subtítulos.");
             return;
         }
 
         const formData = new FormData();
+        if (audioFile) formData.append("audio", audioFile);
+        if (srtFile) formData.append("srt", srtFile);
+
         try {
-            if (file) {
-                formData.append("audio", file);
+            const response = await axios.post("http://127.0.0.1:5000/upload-files", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
 
-                const response = await axios.post("http://127.0.0.1:5000/generate-subtitles", formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
-
+            if (response.data.segments) {
                 setSegments(response.data.segments);
-                setAudioFileUrl(URL.createObjectURL(file)); // NEW
-                setSrtUrl(`http://127.0.0.1:5000${response.data.srt_url}`);
-                setFilename(`${file.name.split(".")[0]}_edited.srt`);
-                setError("");
-            } else if (srtFile) {
-                formData.append("srt", srtFile);
-
-                const response = await axios.post("http://127.0.0.1:5000/upload-srt", formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
-
-                setSegments(response.data.segments);
-                setFilename(srtFile.name);
-                setError("");
+                setFilename(response.data.srt_filename || `${audioFile.name.split(".")[0]}_edited.srt`);
             }
+
+            if (audioFile) {
+                setAudioFileUrl(URL.createObjectURL(audioFile));
+            }
+
+            setError("");
         } catch (error) {
-            console.error("Error durante la carga del archivo:", error);
-            setError("Hubo un problema al procesar el archivo. Intenta nuevamente.");
+            console.error("Error durante la carga de archivos:", error);
+            setError("Hubo un problema al procesar los archivos. Intenta nuevamente.");
         }
     };
 
@@ -92,18 +88,18 @@ function FileUploader() {
 
     return (
         <div className="max-w-full p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
-          <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mt-8 h-[250px] w-[450px] flex flex-col border border-gray-500/50 justify-content-start">
-            <h1 className="text-2xl font-bold text-center">Sube un archivo</h1>
-            <p className="text-center text-gray-400">
-                Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar un archivo <code>.srt</code> para editarlo.
-            </p>
-            <ErrorMessage error={error} />
-            <FileInput
-                onFileChange={handleFileChange}
-                selectedFileName={selectedFileName}
-                fileHelpText="Archivos soportados: .mp3, .wav, .mp4, .m4a para audio y .srt para subtítulos."
-            />
-          </div>
+            <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mt-8 h-[250px] w-[450px] flex flex-col border border-gray-500/50 justify-content-start">
+                <h1 className="text-2xl font-bold text-center">Sube un archivo</h1>
+                <p className="text-center text-gray-400">
+                Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar ambos archivos <code>.srt</code> para editarlos.
+                </p>
+                <ErrorMessage error={error} />
+                <FileInput
+                    onFileChange={handleFileChange}
+                    selectedFileName={selectedAudioFileName || selectedSrtFileName}
+                    fileHelpText="Archivos soportados: .mp3, .wav, .mp4, .m4a para audio y .srt para subtítulos."
+                />
+            </div>
             <UploadButton onUpload={handleUpload} />
             {segments.length > 0 && <SubtitleEditor segments={segments} audioFileUrl={audioFileUrl} onSave={handleSave} />}
             {srtUrl && (
@@ -117,8 +113,6 @@ function FileUploader() {
                     </a>
                 </div>
             )}
-
-          
         </div>
     );
 }

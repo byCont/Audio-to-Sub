@@ -22,7 +22,7 @@ def generate_subtitles():
 
     # Genera los subtítulos
     result = model.transcribe(file_path)
-    os.remove(file_path)
+    # os.remove(file_path)
 
     # Crea el archivo SRT
     srt_content = generate_srt(result["segments"])
