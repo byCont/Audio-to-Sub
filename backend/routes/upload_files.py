@@ -1,3 +1,6 @@
+# backend/routes/upload_files.py
+# Ruta para subir archivos de audio y subtítulos
+
 import os
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename

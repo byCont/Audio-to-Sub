@@ -22,8 +22,8 @@ const AudioSubtitleDisplay = ({
     const { wavesurfer } = useWavesurfer({
         container: containerRef,
         height: 100,
-        waveColor: 'rgb(200, 0, 200)',
-        progressColor: 'rgb(100, 0, 100)',
+        waveColor: 'rgb(86, 101, 115)',
+        progressColor: 'rgb(39, 55, 70)',
         url: audioFileUrl,
         plugins: useMemo(() => [Timeline.create()], []),
     });
