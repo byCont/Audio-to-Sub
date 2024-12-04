@@ -1,7 +1,7 @@
 // frontend/src/App.jsx
 // Archivo principal de la aplicación
 
-import FileUploader from "./components/FileUploader/FileUploader";
+import VideoLyricsGenerator from "./components/VideoLyricsGenerator/VideoLyricsGenerator";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         </h1>
       </header>
       <main className="p-6 gap-2">
-        <FileUploader />   
+        <VideoLyricsGenerator />   
       </main>
     </div>
   );
