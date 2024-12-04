@@ -1,3 +1,6 @@
+// frontend/src/components/VideoLyricsGenerator/StatusDisplay.jsx
+// Componente para mostrar el estado de la carga de archivos
+
 /* eslint-disable react/prop-types */
 
 import { BiError } from 'react-icons/bi';

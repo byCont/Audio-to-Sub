@@ -1,3 +1,6 @@
+// frontend/src/components/VideoLyricsGenerator/AudioControls.jsx
+// Componente para controles de audio
+
 /* eslint-disable react/prop-types */
 
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';

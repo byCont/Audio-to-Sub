@@ -1,3 +1,6 @@
+// frontend/src/components/VideoLyricsGenerator/FileUploader.jsx
+// Componente para subir archivos
+
 /* eslint-disable react/prop-types */
 
 import { FaUpload } from 'react-icons/fa';

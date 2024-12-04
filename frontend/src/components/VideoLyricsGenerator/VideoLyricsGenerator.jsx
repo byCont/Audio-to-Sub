@@ -1,3 +1,6 @@
+// frontend/src/components/VideoLyricsGenerator/VideoLyricsGenerator.jsx
+// Componente principal de VideoLyricsGenerator
+
 import { useState, useRef } from "react";
 import FileUploader from "./FileUploader";
 import AudioControls from "./AudioControls";
