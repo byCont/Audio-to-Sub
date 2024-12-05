@@ -107,7 +107,7 @@ const AudioSubtitleDisplay = ({
                 <p className="text-center text-lg font-bold">
                     {currentSubtitleIndex >= 0 && currentSubtitleIndex < editedSegments.length
                         ? editedSegments[currentSubtitleIndex].text
-                        : "No subtitles available at this moment."}
+                        : "..."}
                 </p>
             </div>
         </div>

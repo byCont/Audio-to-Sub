@@ -88,7 +88,7 @@ function FileUploader() {
 
     return (
         <div className="max-w-full p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-6">
-            <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mt-8 h-[250px] w-[450px] flex flex-col border border-gray-500/50 justify-content-start">
+            <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mt-8 w-[450px] flex flex-col border border-gray-500/50 justify-content-start">
                 <h1 className="text-2xl font-bold text-center">Sube un archivo</h1>
                 <p className="text-center text-gray-400">
                 Puedes subir un archivo de audio para generar subtítulos automáticamente o cargar ambos archivos <code>.srt</code> para editarlos.
