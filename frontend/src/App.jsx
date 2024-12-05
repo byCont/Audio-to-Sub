@@ -1,7 +1,8 @@
 // frontend/src/App.jsx
 // Archivo principal de la aplicación
 
-import FileUploader from "./components/FileUploader/FileUploader";
+// import FileUploader from "./components/FileUploader/FileUploader";
+import MP3ToVideo from "./components/VideoPreview/MP3ToVideo";
 
 function App() {
   return (
@@ -11,8 +12,9 @@ function App() {
         Generador editor y de subtítulos
         </h1>
       </header>
-      <main className="p-6 gap-2">
-        <FileUploader />   
+      <main className="min-h-screen bg-gray-900 flex items-center justify-center">
+        {/* <FileUploader />  */}
+        <MP3ToVideo />  
       </main>
     </div>
   );

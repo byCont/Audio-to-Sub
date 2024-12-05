@@ -8,3 +8,4 @@ __pycache__/
 *.srt
 uploads/
 subtitles/
+output/
