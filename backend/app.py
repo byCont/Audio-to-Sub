@@ -6,6 +6,7 @@ import os
 import subprocess
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+import traceback
 
 app = Flask(__name__)
 CORS(app)  # Permitir solicitudes desde el frontend
@@ -20,12 +21,13 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route('/upload', methods=['POST'])
 def upload_files():
-    """Recibe archivos de imagen y audio y devuelve progreso"""
+    """Recibe archivos de imagen, audio y opcionalmente subtítulos para generar un video"""
     if 'image' not in request.files or 'audio' not in request.files:
         return jsonify({"error": "Archivos de imagen y audio son requeridos"}), 400
 
     image = request.files['image']
     audio = request.files['audio']
+    subtitle = request.files.get('subtitle', None)  # Subtítulos son opcionales
 
     # Guardar archivos subidos
     image_filename = secure_filename(image.filename)
@@ -34,6 +36,16 @@ def upload_files():
     audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
     image.save(image_path)
     audio.save(audio_path)
+
+    subtitle_path = None
+    if subtitle:
+        subtitle_filename = secure_filename(subtitle.filename)
+        subtitle_path = os.path.join(app.config['UPLOAD_FOLDER'], subtitle_filename)
+        subtitle.save(subtitle_path)
+
+    # Validar que el archivo de subtítulos exista y sea accesible
+    if subtitle_path and not os.path.isfile(subtitle_path):
+        return jsonify({"error": "El archivo de subtítulos no es válido o no existe"}), 400
 
     # Generar video usando FFmpeg
     output_filename = f"{os.path.splitext(image_filename)[0]}_{os.path.splitext(audio_filename)[0]}.mp4"
@@ -50,14 +62,34 @@ def upload_files():
             '-tune', 'stillimage',
             '-c:a', 'aac',
             '-b:a', '192k',
-            '-shortest',
-            '-y',
-            output_path
+            '-shortest'
         ]
-        subprocess.run(command, check=True)
+
+        # Agregar subtítulos si están disponibles
+        if subtitle_path:
+            command.extend(['-vf', f"subtitles={subtitle_path}"])
+
+        command.extend(['-y', output_path])
+
+        # Ejecutar el comando y capturar salida de error
+        result = subprocess.run(
+            command,
+            stderr=subprocess.PIPE,  # Captura los errores estándar
+            stdout=subprocess.PIPE,  # Opcional, para capturar la salida estándar
+            text=True                # Devuelve las salidas como cadenas de texto
+        )
+
+        # Verifica si FFmpeg devolvió un código de error
+        if result.returncode != 0:
+            error_message = result.stderr
+            return jsonify({"error": f"FFmpeg error: {error_message}"}), 500
+
         return jsonify({"output_video": output_filename}), 200
-    except subprocess.CalledProcessError as e:
-        return jsonify({"error": f"Error en la conversión: {e}"}), 500
+    except Exception as e:
+        # Captura excepciones inesperadas y devuelve una respuesta con el detalle
+        error_trace = traceback.format_exc()
+        return jsonify({"error": f"Error en la conversión: {str(e)}", "trace": error_trace}), 500
+    
 
 @app.route('/output/<filename>')
 def get_output(filename):

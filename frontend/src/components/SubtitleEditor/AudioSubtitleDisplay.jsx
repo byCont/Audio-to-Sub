@@ -86,6 +86,14 @@ const AudioSubtitleDisplay = ({
 
     return (
         <div>
+        {/* Real-time Subtitle Display */}
+        <div className="mb-4 bg-gray-800 p-2 rounded shadow">
+            <p className="text-center text-lg font-bold">
+                {currentSubtitleIndex >= 0 && currentSubtitleIndex < editedSegments.length
+                    ? editedSegments[currentSubtitleIndex].text
+                    : "..."}
+            </p>
+        </div>
             {/* Wavesurfer Container */}
             <div className="mb-4">
                 <div ref={containerRef} />
@@ -100,15 +108,6 @@ const AudioSubtitleDisplay = ({
                 >
                     {isPlaying ? 'Pause' : 'Play'}
                 </button>
-            </div>
-
-            {/* Real-time Subtitle Display */}
-            <div className="mb-4 bg-gray-800 p-2 rounded shadow">
-                <p className="text-center text-lg font-bold">
-                    {currentSubtitleIndex >= 0 && currentSubtitleIndex < editedSegments.length
-                        ? editedSegments[currentSubtitleIndex].text
-                        : "..."}
-                </p>
             </div>
         </div>
     );

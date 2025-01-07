@@ -1,8 +1,9 @@
 // frontend/src/App.jsx
 // Archivo principal de la aplicación
 
-// import FileUploader from "./components/FileUploader/FileUploader";
-import MP3ToVideo from "./components/VideoPreview/MP3ToVideo";
+import FileUploader from "./components/FileUploader/FileUploader";
+import AudioSubtitleDisplay from "./components/SubtitleEditor/AudioSubtitleDisplay";
+// import MP3ToVideo from "./components/VideoPreview/MP3ToVideo";
 
 function App() {
   return (
@@ -13,8 +14,8 @@ function App() {
         </h1>
       </header>
       <main className="min-h-screen bg-gray-900 flex items-center justify-center">
-        {/* <FileUploader />  */}
-        <MP3ToVideo />  
+        <FileUploader /> 
+        {/* <MP3ToVideo />   */}
       </main>
     </div>
   );

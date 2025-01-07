@@ -166,7 +166,8 @@ const SubtitleEditor = ({ segments, onSave, audioFileUrl }) => {
               >
                   Save Changes
               </button>
-          </div>          
+          </div>
+          {/* Play audio and display subtitles in real time*/}
           <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mx-auto mt-8 flex flex-col w-full border border-gray-500/50">
                 <AudioSubtitleDisplay 
                   audioFileUrl={audioFileUrl} 
