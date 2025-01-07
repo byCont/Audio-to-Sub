@@ -137,47 +137,47 @@ const SubtitleEditor = ({ segments, onSave, audioFileUrl }) => {
     }, [editedSegments]);
 
     return (
-        <div>
-          <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md max-w-md mt-8 h-[600px] flex flex-col border border-gray-500/50  justify-content-start">
-              <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
-              
-              <ErrorAlert message={timeError} />
-
-              {/* Subtitle Editor */}
-              <div className="overflow-y-auto flex-1 pr-2">
-                  {editedSegments.map((segment, index) => (
-                      <SubtitleSegment
-                          key={index}
-                          index={index}
-                          segment={segment}
-                          onTextChange={handleTextChange}
-                          onTimeChange={handleTimeChange}
-                          onTimeBlur={handleTimeBlur}
-                          onInsert={handleInsertSegment}
-                          onMerge={handleMergeSegments}
-                          onDelete={handleDeleteSegment}
-                      />
-                  ))}
-              </div>
-              
-              <button
-                  onClick={handleSave}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mt-4"
-              >
-                  Save Changes
-              </button>
+      <div className="flex flex-row gap-4 p-4"> {/* Contenedor principal con diseño horizontal */}
+        {/* Contenedor del Subtitle Editor */}
+        <div className="bg-gray-800 text-white p-4 rounded-lg shadow-md h-[600px] flex flex-col border border-gray-500/50 justify-start">
+          <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
+    
+          <ErrorAlert message={timeError} />
+    
+          {/* Subtitle Editor */}
+          <div className="overflow-y-auto flex-1 pr-2">
+            {editedSegments.map((segment, index) => (
+              <SubtitleSegment
+                key={index}
+                index={index}
+                segment={segment}
+                onTextChange={handleTextChange}
+                onTimeChange={handleTimeChange}
+                onTimeBlur={handleTimeBlur}
+                onInsert={handleInsertSegment}
+                onMerge={handleMergeSegments}
+                onDelete={handleDeleteSegment}
+              />
+            ))}
           </div>
-          {/* Play audio and display subtitles in real time*/}
-          <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md mx-auto mt-8 flex flex-col w-full border border-gray-500/50">
-                <AudioSubtitleDisplay 
-                  audioFileUrl={audioFileUrl} 
-                  editedSegments={editedSegments} 
-                  onCurrentSubtitleIndexChange={setCurrentSubtitleIndex} 
-                />
-
-          </div>
+    
+          <button
+            onClick={handleSave}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mt-4"
+          >
+            Save Changes
+          </button>
+        </div>
+    
+        {/* Contenedor del AudioSubtitleDisplay */}
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md flex-1 h-[600px] flex flex-col border border-gray-500/50">
+          <AudioSubtitleDisplay
+            audioFileUrl={audioFileUrl}
+            editedSegments={editedSegments}
+            onCurrentSubtitleIndexChange={setCurrentSubtitleIndex}
+          />
+        </div>
       </div>
-        
     );
 };
 
