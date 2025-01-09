@@ -9,20 +9,16 @@ import { formatTime, parseTimeToSeconds } from "../../utils/timeUtils";
 
 const AudioSubtitleDisplay = ({
   audioFileUrl,
-  videoFileUrl, // Nueva prop: URL del video
   editedSegments,
   onCurrentSubtitleIndexChange,
 }) => {
-  // Ref for wavesurfer container
   const containerRef = useRef(null);
   const [currentSubtitleIndex, setCurrentSubtitleIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
-  // Ref for video element
   const videoRef = useRef(null);
 
-  // WaveSurfer hook
   const { wavesurfer } = useWavesurfer({
     container: containerRef,
     height: 100,
@@ -32,7 +28,6 @@ const AudioSubtitleDisplay = ({
     plugins: useMemo(() => [Timeline.create()], []),
   });
 
-  // Play/Pause handler
   const handlePlayPause = useCallback(() => {
     if (wavesurfer) {
       wavesurfer.playPause();
@@ -53,29 +48,23 @@ const AudioSubtitleDisplay = ({
     const handleTimeUpdate = () => {
       const currentTime = wavesurfer.getCurrentTime();
 
-      // Find the current subtitle based on current time
       const index = editedSegments.findIndex(
         (segment) =>
           currentTime >= parseTimeToSeconds(segment.start) &&
           currentTime < parseTimeToSeconds(segment.end)
       );
 
-      // Update current subtitle index if changed
       if (index !== currentSubtitleIndex) {
         setCurrentSubtitleIndex(index);
-
-        // Optional: Notify parent component about subtitle index change
         if (onCurrentSubtitleIndexChange) {
           onCurrentSubtitleIndexChange(index);
         }
       }
     };
 
-    // Track playing state
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
 
-    // Update current time
     const handleTimeChange = () => {
       setCurrentTime(wavesurfer.getCurrentTime());
       if (videoRef.current) {
@@ -98,31 +87,29 @@ const AudioSubtitleDisplay = ({
     };
   }, [wavesurfer, editedSegments, currentSubtitleIndex, onCurrentSubtitleIndexChange]);
 
-  return (
-    <div>
-      {/* Video Display with Subtitles */}
-      <div className="mb-4 bg-gray-800 p-4 rounded shadow w-full max-w-[960px] overflow-hidden aspect-video border border-gray-700 relative">
-        {/* Video Element */}
-        <video
-          ref={videoRef}
-          src={videoFileUrl}
-          className="w-full h-full object-cover"
-          muted
-        ></video>
-
+  return(
+    <div className="flex flex-col items-center justify-center bg-gray-900 space-y-6">
+      <h2 className="text-xl font-bold text-center">Preview</h2>
+  
+      {/* Video Display with Subtitles and Controls */}
+      <div className="mb-4 bg-gray-800 p-4 rounded shadow w-full max-w-4xl overflow-hidden aspect-video border border-gray-700 relative flex items-center justify-center">
         {/* Subtitles Overlay */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded">
-          <p className="text-center text-lg font-bold">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/20 text-white px-2 py-2 rounded">
+          <p className="text-center text-4xl font-bold">
             {currentSubtitleIndex >= 0 && currentSubtitleIndex < editedSegments.length
               ? editedSegments[currentSubtitleIndex].text
               : "..."}
           </p>
         </div>
+  
+        {/* Current Time Display */}
+        <p className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-base text-white">
+          {formatTime(currentTime)} / {formatTime(wavesurfer?.getDuration() || 0)}
+        </p>
       </div>
-
-      {/* Botón Play/Pause y Current Time */}
-      <div className="flex justify-between items-center mt-4">
-        <p className="text-sm">Current Time: {formatTime(currentTime)}</p>
+  
+      {/* Play/Pause Button */}
+      <div className="flex justify-center">
         <button
           onClick={handlePlayPause}
           className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm"
@@ -130,10 +117,10 @@ const AudioSubtitleDisplay = ({
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
-
+  
       {/* Wavesurfer Container */}
-      <div className="mt-4">
-        <div ref={containerRef} />
+      <div className="w-full flex justify-center mt-4">
+        <div ref={containerRef} className="w-full max-w-4xl" />
       </div>
     </div>
   );

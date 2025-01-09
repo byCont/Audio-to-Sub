@@ -137,15 +137,15 @@ const SubtitleEditor = ({ segments, onSave, audioFileUrl }) => {
     }, [editedSegments]);
 
     return (
-      <div className="flex flex-row gap-4 p-4"> {/* Contenedor principal con diseño horizontal */}
+      <div className="flex flex-row gap-4 p-4"> {/* Contenedor principal */}
         {/* Contenedor del Subtitle Editor */}
-        <div className="bg-gray-800 text-white p-4 rounded-lg shadow-md h-[600px] flex flex-col border border-gray-500/50 justify-start">
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md h-[700px] min-w-[400px] flex flex-col border border-gray-500/50 justify-start flex-shrink-0 w-1/4">
           <h2 className="text-xl font-bold mb-4 text-center">Subtitle Editor</h2>
     
           <ErrorAlert message={timeError} />
     
           {/* Subtitle Editor */}
-          <div className="overflow-y-auto flex-1 pr-2">
+          <div className="overflow-y-auto pr-2">
             {editedSegments.map((segment, index) => (
               <SubtitleSegment
                 key={index}
@@ -170,7 +170,7 @@ const SubtitleEditor = ({ segments, onSave, audioFileUrl }) => {
         </div>
     
         {/* Contenedor del AudioSubtitleDisplay */}
-        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md flex-1 h-[600px] flex flex-col border border-gray-500/50">
+        <div className="bg-gray-900 text-white p-4 rounded-lg shadow-md border border-gray-500/50 w-3/4">
           <AudioSubtitleDisplay
             audioFileUrl={audioFileUrl}
             editedSegments={editedSegments}
