@@ -62,5 +62,5 @@ Las principales funcionalidades son:
 1. **Clona el repositorio:**
 
    ```bash
-   git clone https://github.com/tu-usuario/Audio-to-Subtitulos.git
-   cd Audio-to-Subtitulos
+   git clone https://github.com/byCont/Audio-to-Sub
+   cd Audio-to-Sub
