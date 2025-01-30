@@ -24,7 +24,10 @@ const AudioSubtitleDisplay = ({
     height: 100,
     waveColor: "rgb(86, 101, 115)",
     progressColor: "rgb(39, 55, 70)",
-    url: audioFileUrl,
+    url: audioFileUrl, 
+    barWidth: 4,
+    barGap: 4,
+    barRadius: 4,
     plugins: useMemo(() => [Timeline.create()], []),
   });
 
@@ -40,7 +43,7 @@ const AudioSubtitleDisplay = ({
       }
     }
   }, [wavesurfer, isPlaying]);
-
+  
   // Sync subtitles with audio playback
   useEffect(() => {
     if (!wavesurfer || !editedSegments.length) return;
@@ -87,12 +90,23 @@ const AudioSubtitleDisplay = ({
     };
   }, [wavesurfer, editedSegments, currentSubtitleIndex, onCurrentSubtitleIndexChange]);
 
-  return(
+  return (
     <div className="flex flex-col items-center justify-center bg-gray-900 space-y-6">
       <h2 className="text-xl font-bold text-center">Preview</h2>
-  
+
       {/* Video Display with Subtitles and Controls */}
-      <div className="mb-4 bg-gray-800 p-4 rounded shadow w-full max-w-4xl overflow-hidden aspect-video border border-gray-700 relative flex items-center justify-center">
+      <div className="relative bg-gray-800 p-4 rounded-xl shadow w-full max-w-4xl overflow-hidden aspect-video border border-gray-700">
+        {/* Video Background */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          src="http://localhost:5000/uploads/visual.mp4"
+          // controls
+          muted
+          loop
+          onError={(e) => console.error("Error loading video:", e)}
+        />
+
         {/* Subtitles Overlay */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/20 text-white px-2 py-2 rounded">
           <p className="text-center text-4xl font-bold">
@@ -101,13 +115,13 @@ const AudioSubtitleDisplay = ({
               : "..."}
           </p>
         </div>
-  
+
         {/* Current Time Display */}
         <p className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-base text-white">
           {formatTime(currentTime)} / {formatTime(wavesurfer?.getDuration() || 0)}
         </p>
       </div>
-  
+
       {/* Play/Pause Button */}
       <div className="flex justify-center">
         <button
@@ -117,7 +131,7 @@ const AudioSubtitleDisplay = ({
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
-  
+
       {/* Wavesurfer Container */}
       <div className="w-full flex justify-center mt-4">
         <div ref={containerRef} className="w-full max-w-4xl" />
