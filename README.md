@@ -1,8 +1,8 @@
-# Audio-to-Video 📽️🎧
+# Audio-to-Subtitulos 📽️🎧
 
 ## Resumen del Proyecto
 
-Audio-to-Video es una aplicación web que utiliza el modelo **Whisper de OpenAI** para transcribir audios a texto y generar subtítulos automáticamente. El backend está construido con **Flask** en Python, mientras que el frontend está desarrollado en **React**. Esta herramienta permite a los usuarios subir archivos de audio, generar subtítulos, editarlos y descargarlos en formato `.srt`. 
+Audio-to-Subtitulos es una aplicación web que utiliza el modelo **Whisper de OpenAI** para transcribir audios a texto y generar subtítulos automáticamente. El backend está construido con **Flask** en Python, mientras que el frontend está desarrollado en **React**. Esta herramienta permite a los usuarios subir archivos de audio, generar subtítulos, editarlos y descargarlos en formato `.srt`.
 
 Las principales funcionalidades son:
 - **Subir archivos de audio** 🎶: Los usuarios pueden cargar archivos en formatos como `.wav`, `.mp3`, `.mp4` y `.m4a`.
@@ -31,19 +31,18 @@ Las principales funcionalidades son:
   - **FileInput.jsx**: Componente para seleccionar archivos de audio.
   - **ErrorMessage.jsx**: Muestra los errores durante el proceso de carga.
   - **UploadButton.jsx**: Botón para iniciar la carga del archivo.
-  
+
 - **SubtitleEditor**: Componente para editar los subtítulos generados.
   - **SubtitleEditor.jsx**: Componente principal para la edición de subtítulos.
   - **SubtitleSegment.jsx**: Manejo de un segmento individual de subtítulos.
   - **ErrorAlert.jsx**: Muestra errores relacionados con los subtítulos.
   - **AudioSubtitleDisplay.jsx**: Reproduce el audio y muestra los subtítulos sincronizados en la línea de tiempo.
-  
+
 - **utils/timeUtils.js**: Funciones para manejar el formato de tiempo y validaciones de los subtítulos.
 - **App.jsx**: Entrada principal de la aplicación.
 - **index.css**: Estilos generales para la aplicación.
 - **main.jsx**: Punto de entrada principal de React.
 - **public/**: Contiene archivos estáticos como `index.html` y el icono de la aplicación.
-
 
 ## Requisitos
 
@@ -63,5 +62,5 @@ Las principales funcionalidades son:
 1. **Clona el repositorio:**
 
    ```bash
-   git clone https://github.com/tu-usuario/Audio-to-video.git
-   cd Audio-to-video
+   git clone https://github.com/byCont/Audio-to-Sub
+   cd Audio-to-Sub
