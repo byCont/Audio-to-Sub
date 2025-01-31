@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 import srt
 
 UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = {'srt'}
+ALLOWED_EXTENSIONS = {'srt', 'lrc'}
 
 upload_srt_bp = Blueprint('upload_srt', __name__)
 

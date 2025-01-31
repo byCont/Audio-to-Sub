@@ -26,7 +26,7 @@ function FileUploader() {
         if (selectedFile) {
             const fileType = selectedFile.name.split(".").pop().toLowerCase();
             
-            if (fileType === "srt") {
+if (fileType === "srt" || fileType === "lrc") {
                 setSrtFile(selectedFile);
                 setSelectedSrtFileName(selectedFile.name);
                 setSelectedAudioFileName("");  // Reset audio file
@@ -37,7 +37,7 @@ function FileUploader() {
                 setSelectedSrtFileName("");  // Reset SRT file
                 setError("");
             } else {
-                setError("Formato no compatible. Solo se aceptan archivos de audio (.mp3, .wav, .mp4, .m4a) y subtítulos (.srt).");
+                setError("Formato no compatible. Solo se aceptan archivos de audio (.mp3, .wav, .mp4, .m4a) y subtítulos (.srt, .lrc).");
             }
         }
     };
@@ -49,38 +49,38 @@ function FileUploader() {
         setIsLoading(false); // Desactiva el estado de carga
     };
 
-    const handleUpload = async () => {
-        if (!audioFile && !srtFile) {
-            setError("Por favor, selecciona un archivo de audio o subtítulos.");
-            return;
-        }
+const handleUpload = async () => {
+    if (!audioFile && !srtFile) {
+        setError("Por favor, selecciona un archivo de audio o subtítulos.");
+        return;
+    }
 
-        const formData = new FormData();
-        if (audioFile) formData.append("audio", audioFile);
-        if (srtFile) formData.append("srt", srtFile);
+    const formData = new FormData();
+    if (audioFile) formData.append("audio", audioFile);
+    if (srtFile) formData.append("srt", srtFile);
 
-        try {
+    try {
             const response = await axios.post("http://127.0.0.1:5000/upload-files", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            headers: { "Content-Type": "multipart/form-data" },
+        });
 
-            if (response.data.segments) {
-                setSegments(response.data.segments);
-                setFilename(response.data.srt_filename || `${audioFile.name.split(".")[0]}_edited.srt`);
-            }
-
-            if (audioFile) {
-                setAudioFileUrl(URL.createObjectURL(audioFile));
-            }
-
-            setError("");
-        } catch (error) {
-            console.error("Error durante la carga de archivos:", error);
-            setError("Hubo un problema al procesar los archivos. Intenta nuevamente.");
+        if (response.data.segments) {
+            setSegments(response.data.segments);
+            setFilename(response.data.srt_filename || `${audioFile.name.split(".")[0]}_edited.srt`);
         }
+
+        if (audioFile) {
+            setAudioFileUrl(URL.createObjectURL(audioFile));
+        }
+
+        setError("");
+    } catch (error) {
+        console.error("Error durante la carga de archivos:", error);
+        setError("Hubo un problema al procesar los archivos. Intenta nuevamente.");
+    }
     };
 
-    const handleSave = async (editedSegments) => {
+const handleSave = async (editedSegments) => {
         try {
             const response = await axios.post("http://127.0.0.1:5000/save-subtitles", {
                 segments: editedSegments,
@@ -141,4 +141,3 @@ function FileUploader() {
 }
 
 export default FileUploader;
-
